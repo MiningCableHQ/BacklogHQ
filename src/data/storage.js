@@ -49,7 +49,9 @@ function validateTrackerData(data) {
     (game) =>
       typeof game.title === 'string' &&
       typeof game.coverUrl === 'string' &&
-      Number.isInteger(game.releaseYear) &&
+      (game.releaseYear === null ||
+        game.releaseYear === undefined ||
+        Number.isInteger(game.releaseYear)) &&
       ids.platforms.has(game.platformId) &&
       Array.isArray(game.genreIds) &&
       game.genreIds.every((genreId) => ids.genres.has(genreId)) &&

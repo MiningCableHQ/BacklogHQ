@@ -15,7 +15,7 @@ export const GAME_PRIORITIES = Object.freeze(['LOW', 'MEDIUM', 'HIGH'])
  * @property {string} id
  * @property {string} title
  * @property {string} coverUrl
- * @property {number} releaseYear
+ * @property {number|null} releaseYear
  * @property {string} platformId
  * @property {string[]} genreIds
  * @property {'WISHLIST'|'BACKLOG'|'PLAYING'|'COMPLETED'|'DROPPED'} status
