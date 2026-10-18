@@ -1,30 +1,16 @@
-# Personal Game Backlog Tracker
+# React + Vite
 
-A React + Tailwind front-end app for organizing a personal backlog, tracking hours played, and reviewing completed games.
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-## Features
-- Game library with add, edit, and delete flows
-- Backlog workflow from Wishlist to Dropped
-- Search, filter, and sort tools for platform, genre, and status views
-- Dashboard with computed totals, completion stats, and top genres
-- Dedicated game detail route with play sessions and review logging
-- LocalStorage persistence for a realistic demo experience
+Currently, two official plugins are available:
 
-## Implementation plan
-1. Scaffold the app shell and Tailwind theme foundation.
-2. Build the dashboard and summary analytics cards.
-3. Implement the library grid, search, and CRUD modal.
-4. Add game detail pages and status transitions.
-5. Add play session logging and review tracking.
-6. Final polish, responsiveness, and local persistence validation.
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
 
-## Run locally
-```bash
-npm install
-npm run dev -- --host 0.0.0.0
-```
+## React Compiler
 
-## Build
-```bash
-npm run build
-```
+The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+
+## Expanding the ESLint configuration
+
+If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
