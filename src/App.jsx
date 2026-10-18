@@ -175,7 +175,12 @@ function AppShell() {
                 }
                 path="/library"
               />
-              <Route element={<GameDetailPage />} path="/games/:gameId" />
+              <Route
+                element={
+                  <GameDetailPage data={trackerState.data} onSave={commitData} />
+                }
+                path="/games/:gameId"
+              />
               <Route
                 element={
                   <GameFormPage
@@ -423,22 +428,300 @@ function GameCard({ game, genres, index, onDelete, platforms }) {
   )
 }
 
-function GameDetailPage() {
+function GameDetailPage({ data, onSave }) {
   const { gameId } = useParams()
+  const game = data.games.find((item) => item.id === gameId)
+  const [saveError, setSaveError] = useState('')
+  const [coverFailed, setCoverFailed] = useState(false)
+
+  if (!game) {
+    return (
+      <>
+        <PageHeading
+          description="This game could not be found in your collection."
+          eyebrow="Collection"
+          title="Game not found"
+        />
+        <section className="rounded-2xl border border-white/[0.08] bg-[#12101a] p-6 sm:p-8">
+          <p className="text-sm leading-6 text-slate-400">
+            It may have been deleted or the address may be incorrect.
+          </p>
+          <div className="mt-5">
+            <PrimaryLink to="/library">Back to Library</PrimaryLink>
+          </div>
+        </section>
+      </>
+    )
+  }
+
+  const platform = data.platforms.find(
+    (item) => item.id === game.platformId,
+  )
+  const genres = game.genreIds
+    .map((id) => data.genres.find((genre) => genre.id === id)?.name)
+    .filter(Boolean)
+  const review = data.reviews.find((item) => item.gameId === game.id)
+  const sessions = data.sessions
+    .filter((session) => session.gameId === game.id)
+    .sort((first, second) => second.date.localeCompare(first.date))
+  const totalHours = sessions.reduce(
+    (total, session) => total + session.hoursPlayed,
+    0,
+  )
+
+  function changeStatus(event) {
+    const nextStatus = event.target.value
+    if (!GAME_STATUSES.includes(nextStatus)) {
+      setSaveError('Choose a valid game status.')
+      return
+    }
+
+    const now = new Date().toISOString()
+    const updatedGame = {
+      ...game,
+      status: nextStatus,
+      dateStarted:
+        nextStatus === 'PLAYING' ? game.dateStarted ?? now : game.dateStarted,
+      dateCompleted:
+        nextStatus === 'COMPLETED'
+          ? game.dateCompleted ?? now
+          : game.dateCompleted,
+    }
+    const nextData = {
+      ...data,
+      games: data.games.map((item) =>
+        item.id === game.id ? updatedGame : item,
+      ),
+    }
+
+    if (onSave(nextData)) {
+      setSaveError('')
+    } else {
+      setSaveError('Could not save the status. Please try again.')
+    }
+  }
+
+  const coverGradient =
+    'bg-gradient-to-br from-fuchsia-500 via-violet-500 to-blue-700'
 
   return (
     <>
-      <PageHeading
-        description="A dedicated space for a game's details, progress, and play history."
-        eyebrow="Game details"
-        title="Game Detail"
-      />
-      <PlaceholderPanel title="Game details will appear here">
-        This page is ready for game{' '}
-        <span className="font-mono text-violet-200">{gameId}</span>.
-      </PlaceholderPanel>
+      <Link
+        className="mb-6 inline-flex items-center gap-2 text-sm font-medium text-violet-300 transition-colors hover:text-violet-200"
+        to="/library"
+      >
+        <span aria-hidden="true">←</span> Back to Library
+      </Link>
+
+      {saveError && (
+        <p
+          className="mb-5 rounded-lg border border-rose-400/25 bg-rose-500/10 px-4 py-3 text-sm text-rose-200"
+          role="alert"
+        >
+          {saveError}
+        </p>
+      )}
+
+      <section className="overflow-hidden rounded-2xl border border-white/[0.08] bg-[#12101a]">
+        <div className="grid gap-6 p-5 sm:p-7 lg:grid-cols-[180px_minmax(0,1fr)]">
+          <div
+            className={`relative flex aspect-[4/5] max-h-64 items-center justify-center overflow-hidden rounded-xl ${coverGradient} lg:max-h-none`}
+          >
+            {game.coverUrl && !coverFailed ? (
+              <img
+                alt={`${game.title} cover`}
+                className="absolute inset-0 h-full w-full object-cover"
+                onError={() => setCoverFailed(true)}
+                src={game.coverUrl}
+              />
+            ) : (
+              <span
+                aria-hidden="true"
+                className="text-5xl font-semibold text-white/70"
+              >
+                {game.title.charAt(0).toUpperCase()}
+              </span>
+            )}
+          </div>
+
+          <div className="min-w-0">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+              <div className="min-w-0">
+                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-violet-300">
+                  {platform?.name ?? 'Unknown platform'}
+                </p>
+                <h1 className="mt-2 break-words text-2xl font-semibold tracking-tight text-white sm:text-3xl">
+                  {game.title}
+                </h1>
+                <p className="mt-2 text-sm text-slate-400">
+                  {game.releaseYear}
+                  {genres.length > 0 && (
+                    <>
+                      <span className="px-2 text-slate-600">·</span>
+                      {genres.join(', ')}
+                    </>
+                  )}
+                </p>
+              </div>
+              <PrimaryLink to={`/games/${encodeURIComponent(game.id)}/edit`}>
+                Edit Game
+              </PrimaryLink>
+            </div>
+
+            <div className="mt-6 border-t border-white/[0.06] pt-5">
+              <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
+                Status
+              </p>
+              <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 xl:grid-cols-5">
+                {GAME_STATUSES.map((status) => {
+                  const selected = game.status === status
+                  return (
+                    <label
+                      className={`flex min-h-10 cursor-pointer items-center justify-center rounded-lg border px-3 text-xs font-medium transition-colors ${
+                        selected
+                          ? STATUS_STYLES[status]
+                          : 'border-white/[0.08] bg-white/[0.02] text-slate-400 hover:border-white/20 hover:text-slate-200'
+                      }`}
+                      key={status}
+                    >
+                      <input
+                        checked={selected}
+                        className="sr-only"
+                        name="game-status"
+                        onChange={changeStatus}
+                        type="radio"
+                        value={status}
+                      />
+                      {STATUS_LABELS[status]}
+                    </label>
+                  )
+                })}
+              </div>
+            </div>
+
+            <div className="mt-5 grid gap-3 sm:grid-cols-3">
+              <DetailMetric label="Total Playtime" value={`${totalHours} hrs`} />
+              <DetailMetric
+                label="Play Sessions"
+                value={sessions.length.toString()}
+              />
+              <div className="rounded-xl border border-white/[0.07] bg-[#0e0c14] p-4">
+                <p className="text-[11px] font-medium uppercase tracking-wide text-slate-500">
+                  Priority
+                </p>
+                <p className="mt-2 text-sm font-semibold text-white">
+                  {game.priority[0] + game.priority.slice(1).toLowerCase()}
+                </p>
+              </div>
+            </div>
+
+            <div className="mt-5">
+              <h2 className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                Notes
+              </h2>
+              <p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-slate-300">
+                {game.notes.trim() || 'No notes added yet.'}
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div className="mt-5 grid gap-5 lg:grid-cols-[minmax(0,1.4fr)_minmax(280px,0.8fr)]">
+        <section className="rounded-2xl border border-white/[0.08] bg-[#12101a] p-5 sm:p-6">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <h2 className="text-base font-semibold text-white">Play Sessions</h2>
+              <p className="mt-1 text-xs text-slate-500">
+                {sessions.length
+                  ? 'Your logged sessions for this game.'
+                  : 'No play sessions have been logged yet.'}
+              </p>
+            </div>
+            <span className="rounded-lg border border-violet-400/20 bg-violet-500/10 px-3 py-1.5 text-xs font-semibold text-violet-200">
+              {totalHours} hrs total
+            </span>
+          </div>
+          {sessions.length > 0 && (
+            <ul className="mt-5 divide-y divide-white/[0.06]">
+              {sessions.map((session) => (
+                <li
+                  className="flex flex-col justify-between gap-1 py-3 sm:flex-row sm:items-center"
+                  key={session.id}
+                >
+                  <div>
+                    <p className="text-sm font-medium text-slate-200">
+                      {formatDate(session.date)}
+                    </p>
+                    <p className="mt-1 text-xs text-slate-500">
+                      {session.note || 'No session note'}
+                    </p>
+                  </div>
+                  <span className="text-sm font-semibold text-violet-200">
+                    {session.hoursPlayed} {session.hoursPlayed === 1 ? 'hr' : 'hrs'}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+
+        <section className="rounded-2xl border border-white/[0.08] bg-[#12101a] p-5 sm:p-6">
+          <h2 className="text-base font-semibold text-white">Your Review</h2>
+          {review ? (
+            <>
+              <div
+                aria-label={`${review.rating} out of 5 stars`}
+                className="mt-4 flex items-center gap-2"
+                role="img"
+              >
+                <span className="tracking-widest text-amber-300">
+                  {'★'.repeat(review.rating)}
+                  <span className="text-slate-700">
+                    {'★'.repeat(5 - review.rating)}
+                  </span>
+                </span>
+                <span className="text-sm font-semibold text-white">
+                  {review.rating}/5
+                </span>
+              </div>
+              <p className="mt-3 whitespace-pre-wrap text-sm leading-6 text-slate-300">
+                {review.reviewText || 'No written review.'}
+              </p>
+              <p className="mt-4 text-xs text-slate-500">
+                Reviewed {formatDate(review.dateReviewed)}
+              </p>
+            </>
+          ) : (
+            <p className="mt-3 text-sm text-slate-400">
+              No rating or review yet.
+            </p>
+          )}
+        </section>
+      </div>
     </>
   )
+}
+
+function DetailMetric({ label, value }) {
+  return (
+    <div className="rounded-xl border border-white/[0.07] bg-[#0e0c14] p-4">
+      <p className="text-[11px] font-medium uppercase tracking-wide text-slate-500">
+        {label}
+      </p>
+      <p className="mt-2 text-sm font-semibold text-white">{value}</p>
+    </div>
+  )
+}
+
+function formatDate(value) {
+  const date = new Date(value)
+  if (Number.isNaN(date.getTime())) return 'Unknown date'
+  return new Intl.DateTimeFormat(undefined, {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  }).format(date)
 }
 
 function makeGameId(title) {
