@@ -177,7 +177,11 @@ function AppShell() {
               />
               <Route
                 element={
-                  <GameDetailPage data={trackerState.data} onSave={commitData} />
+                  <GameDetailPage
+                    key={location.pathname}
+                    data={trackerState.data}
+                    onSave={commitData}
+                  />
                 }
                 path="/games/:gameId"
               />
@@ -693,6 +697,20 @@ function GameDetailPage({ data, onSave }) {
   const game = data.games.find((item) => item.id === gameId)
   const [saveError, setSaveError] = useState('')
   const [coverFailed, setCoverFailed] = useState(false)
+  const [sessionValues, setSessionValues] = useState(() => ({
+    date: localDateInputValue(new Date()),
+    hoursPlayed: '',
+    note: '',
+  }))
+  const [sessionError, setSessionError] = useState('')
+  const [reviewValues, setReviewValues] = useState(() => {
+    const savedReview = data.reviews.find((item) => item.gameId === gameId)
+    return {
+      rating: savedReview?.rating?.toString() ?? '',
+      reviewText: savedReview?.reviewText ?? '',
+    }
+  })
+  const [reviewError, setReviewError] = useState('')
 
   if (!game) {
     return (
@@ -728,6 +746,88 @@ function GameDetailPage({ data, onSave }) {
     (total, session) => total + session.hoursPlayed,
     0,
   )
+
+  function handleSessionSubmit(event) {
+    event.preventDefault()
+    const hoursPlayed = Number(sessionValues.hoursPlayed)
+    const date = new Date(`${sessionValues.date}T12:00:00`)
+
+    if (
+      !/^\d{4}-\d{2}-\d{2}$/.test(sessionValues.date) ||
+      !Number.isFinite(date.getTime()) ||
+      localDateInputValue(date) !== sessionValues.date
+    ) {
+      setSessionError('Choose a valid session date.')
+      return
+    }
+    if (!Number.isFinite(hoursPlayed) || hoursPlayed <= 0 || hoursPlayed > 24) {
+      setSessionError('Enter session time greater than 0 and no more than 24 hours.')
+      return
+    }
+    if (sessionValues.note.trim().length > 300) {
+      setSessionError('Session notes must be 300 characters or fewer.')
+      return
+    }
+
+    const session = {
+      id: globalThis.crypto.randomUUID(),
+      gameId: game.id,
+      date: date.toISOString(),
+      hoursPlayed,
+      note: sessionValues.note.trim(),
+    }
+    const nextData = { ...data, sessions: [...data.sessions, session] }
+    if (onSave(nextData)) {
+      setSessionValues({
+        date: localDateInputValue(new Date()),
+        hoursPlayed: '',
+        note: '',
+      })
+      setSessionError('')
+      setSaveError('')
+    } else {
+      setSessionError('Could not save the play session. Please try again.')
+    }
+  }
+
+  function handleReviewSubmit(event) {
+    event.preventDefault()
+    const rating = Number(reviewValues.rating)
+    const reviewText = reviewValues.reviewText.trim()
+
+    if (!Number.isInteger(rating) || rating < 1 || rating > 5) {
+      setReviewError('Choose a rating from 1 to 5 stars.')
+      return
+    }
+    if (reviewText.length > 500) {
+      setReviewError('Review notes must be 500 characters or fewer.')
+      return
+    }
+
+    const savedReview = data.reviews.find((item) => item.gameId === game.id)
+    const updatedReview = {
+      id: savedReview?.id ?? globalThis.crypto.randomUUID(),
+      gameId: game.id,
+      rating,
+      reviewText,
+      dateReviewed: new Date().toISOString(),
+    }
+    const nextData = {
+      ...data,
+      reviews: savedReview
+        ? data.reviews.map((item) =>
+            item.gameId === game.id ? updatedReview : item,
+          )
+        : [...data.reviews, updatedReview],
+    }
+
+    if (onSave(nextData)) {
+      setReviewError('')
+      setSaveError('')
+    } else {
+      setReviewError('Could not save the review. Please try again.')
+    }
+  }
 
   function changeStatus(event) {
     const nextStatus = event.target.value
@@ -902,6 +1002,71 @@ function GameDetailPage({ data, onSave }) {
               {totalHours} hrs total
             </span>
           </div>
+          <form
+            className="mt-5 grid gap-3 rounded-xl border border-white/[0.07] bg-[#0e0c14] p-4 sm:grid-cols-[1fr_110px_1.3fr_auto]"
+            onSubmit={handleSessionSubmit}
+          >
+            <label className="text-xs font-medium text-slate-400">
+              Date
+              <input
+                className={INPUT_CLASS}
+                max={localDateInputValue(new Date())}
+                onChange={(event) =>
+                  setSessionValues((current) => ({
+                    ...current,
+                    date: event.target.value,
+                  }))
+                }
+                required
+                type="date"
+                value={sessionValues.date}
+              />
+            </label>
+            <label className="text-xs font-medium text-slate-400">
+              Hours
+              <input
+                className={INPUT_CLASS}
+                max="24"
+                min="0.25"
+                onChange={(event) =>
+                  setSessionValues((current) => ({
+                    ...current,
+                    hoursPlayed: event.target.value,
+                  }))
+                }
+                required
+                step="0.25"
+                type="number"
+                value={sessionValues.hoursPlayed}
+              />
+            </label>
+            <label className="text-xs font-medium text-slate-400">
+              Note (optional)
+              <input
+                className={INPUT_CLASS}
+                maxLength={300}
+                onChange={(event) =>
+                  setSessionValues((current) => ({
+                    ...current,
+                    note: event.target.value,
+                  }))
+                }
+                placeholder="What did you do this session?"
+                value={sessionValues.note}
+              />
+            </label>
+            <button
+              className={`${BUTTON_CLASS} self-end bg-violet-600 text-white hover:bg-violet-500`}
+              type="submit"
+            >
+              Add Session
+            </button>
+          </form>
+          {sessionError && (
+            <p className="mt-3 text-sm text-rose-200" role="alert">
+              {sessionError}
+            </p>
+          )}
           {sessions.length > 0 && (
             <ul className="mt-5 divide-y divide-white/[0.06]">
               {sessions.map((session) => (
@@ -927,36 +1092,75 @@ function GameDetailPage({ data, onSave }) {
         </section>
 
         <section className="rounded-2xl border border-white/[0.08] bg-[#12101a] p-5 sm:p-6">
-          <h2 className="text-base font-semibold text-white">Your Review</h2>
-          {review ? (
-            <>
-              <div
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <h2 className="text-base font-semibold text-white">Your Review</h2>
+              <p className="mt-1 text-xs text-slate-500">
+                {review ? `Last updated ${formatDate(review.dateReviewed)}` : 'Rate and review this game.'}
+              </p>
+            </div>
+            {review && (
+              <span
                 aria-label={`${review.rating} out of 5 stars`}
-                className="mt-4 flex items-center gap-2"
+                className="shrink-0 tracking-widest text-amber-300"
                 role="img"
               >
-                <span className="tracking-widest text-amber-300">
-                  {'★'.repeat(review.rating)}
-                  <span className="text-slate-700">
-                    {'★'.repeat(5 - review.rating)}
-                  </span>
+                {'★'.repeat(review.rating)}
+                <span className="text-slate-700">
+                  {'★'.repeat(5 - review.rating)}
                 </span>
-                <span className="text-sm font-semibold text-white">
-                  {review.rating}/5
-                </span>
-              </div>
-              <p className="mt-3 whitespace-pre-wrap text-sm leading-6 text-slate-300">
-                {review.reviewText || 'No written review.'}
+              </span>
+            )}
+          </div>
+          <form className="mt-5 space-y-4" onSubmit={handleReviewSubmit}>
+            <label className="block text-xs font-medium text-slate-400">
+              Rating
+              <select
+                className={INPUT_CLASS}
+                onChange={(event) =>
+                  setReviewValues((current) => ({
+                    ...current,
+                    rating: event.target.value,
+                  }))
+                }
+                required
+                value={reviewValues.rating}
+              >
+                <option value="">Choose a rating</option>
+                {[5, 4, 3, 2, 1].map((rating) => (
+                  <option key={rating} value={rating}>
+                    {rating} {rating === 1 ? 'star' : 'stars'}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label className="block text-xs font-medium text-slate-400">
+              Review note (optional)
+              <textarea
+                className={`${INPUT_CLASS} min-h-24 resize-y py-3`}
+                maxLength={500}
+                onChange={(event) =>
+                  setReviewValues((current) => ({
+                    ...current,
+                    reviewText: event.target.value,
+                  }))
+                }
+                placeholder="What did you think of the game?"
+                value={reviewValues.reviewText}
+              />
+            </label>
+            {reviewError && (
+              <p className="text-sm text-rose-200" role="alert">
+                {reviewError}
               </p>
-              <p className="mt-4 text-xs text-slate-500">
-                Reviewed {formatDate(review.dateReviewed)}
-              </p>
-            </>
-          ) : (
-            <p className="mt-3 text-sm text-slate-400">
-              No rating or review yet.
-            </p>
-          )}
+            )}
+            <button
+              className={`${BUTTON_CLASS} w-full bg-violet-600 text-white hover:bg-violet-500`}
+              type="submit"
+            >
+              {review ? 'Update Review' : 'Save Review'}
+            </button>
+          </form>
         </section>
       </div>
     </>
@@ -982,6 +1186,11 @@ function formatDate(value) {
     month: 'short',
     day: 'numeric',
   }).format(date)
+}
+
+function localDateInputValue(date) {
+  const offsetDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000)
+  return offsetDate.toISOString().slice(0, 10)
 }
 
 function makeGameId(title) {
