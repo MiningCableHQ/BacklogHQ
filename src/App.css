@@ -1,0 +1,30 @@
+.panel-surface {
+  background: rgba(15, 23, 42, 0.82);
+  border: 1px solid rgba(148, 163, 184, 0.12);
+  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.5);
+}
+
+.game-cover {
+  position: relative;
+  overflow: hidden;
+}
+
+.game-cover::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.18), transparent 52%);
+}
+
+.status-pill {
+  border: 1px solid rgba(148, 163, 184, 0.18);
+}
+
+.scrollbar-thin::-webkit-scrollbar {
+  width: 8px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.35);
+  border-radius: 9999px;
+}

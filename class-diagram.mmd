@@ -1,0 +1,255 @@
+---
+title: Personal Game Backlog Tracker - Class Diagram
+---
+classDiagram
+    direction TB
+
+    %% ============================================================
+    %% ENUMERATIONS
+    %% ============================================================
+    class GameStatus {
+        <<enumeration>>
+        WISHLIST
+        BACKLOG
+        PLAYING
+        COMPLETED
+        DROPPED
+    }
+
+    class SortField {
+        <<enumeration>>
+        TITLE
+        RELEASE_YEAR
+        RATING
+        DATE_ADDED
+        PLAYTIME
+    }
+
+    class SortOrder {
+        <<enumeration>>
+        ASC
+        DESC
+    }
+
+    %% ============================================================
+    %% DOMAIN MODELS (entities)
+    %% ============================================================
+    class Game {
+        -id: string
+        -title: string
+        -coverUrl: string
+        -releaseYear: number
+        -platformId: string
+        -genreIds: string[]
+        -status: GameStatus
+        -notes: string
+        -dateAdded: Date
+        -dateStarted: Date
+        -dateCompleted: Date
+        +canTransitionTo(next: GameStatus) boolean
+        +changeStatus(next: GameStatus) void
+        +toJSON() object
+        +fromJSON(data: object) Game$
+    }
+
+    class Platform {
+        -id: string
+        -name: string
+        -iconKey: string
+        +toJSON() object
+        +fromJSON(data: object) Platform$
+    }
+
+    class Genre {
+        -id: string
+        -name: string
+        +toJSON() object
+        +fromJSON(data: object) Genre$
+    }
+
+    class PlaySession {
+        -id: string
+        -gameId: string
+        -date: Date
+        -hoursPlayed: number
+        -note: string
+        +isValid() boolean
+        +toJSON() object
+        +fromJSON(data: object) PlaySession$
+    }
+
+    class Review {
+        -id: string
+        -gameId: string
+        -rating: number
+        -reviewText: string
+        -dateReviewed: Date
+        +isValidRating() boolean
+        +toJSON() object
+        +fromJSON(data: object) Review$
+    }
+
+    %% ============================================================
+    %% UI CONFIGURATION MODELS (no hardcoded text in components)
+    %% ============================================================
+    class StatusMeta {
+        -status: GameStatus
+        -label: string
+        -description: string
+        -colorToken: string
+        -sortOrder: number
+        -allowedNext: GameStatus[]
+    }
+
+    %% ============================================================
+    %% FILTER / QUERY OBJECT
+    %% ============================================================
+    class GameFilter {
+        +searchQuery: string
+        +status: GameStatus
+        +platformId: string
+        +genreId: string
+        +sortBy: SortField
+        +sortOrder: SortOrder
+        +apply(games: Game[], sessions: PlaySession[], reviews: Review[]) Game[]
+        +reset() void
+        +hasActiveFilters() boolean
+    }
+
+    %% ============================================================
+    %% STATISTICS (calculated models for the Dashboard)
+    %% ============================================================
+    class StatusCount {
+        -status: GameStatus
+        -count: number
+    }
+
+    class GenreCount {
+        -genreId: string
+        -count: number
+    }
+
+    class BacklogStats {
+        -totalGames: number
+        -statusCounts: StatusCount[]
+        -totalHoursPlayed: number
+        -completionRate: number
+        -averageRating: number
+        -topGenres: GenreCount[]
+        -recentSessions: PlaySession[]
+    }
+
+    class StatsService {
+        +calculate(games: Game[], sessions: PlaySession[], reviews: Review[]) BacklogStats
+        +getTotalHours(sessions: PlaySession[]) number
+        +getCompletionRate(games: Game[]) number
+        +getTopGenres(games: Game[], limit: number) GenreCount[]
+        +getAverageRating(reviews: Review[]) number
+    }
+
+    %% ============================================================
+    %% SERVICE LAYER (business logic)
+    %% ============================================================
+    class GameService {
+        -repository: GameRepository
+        +getAllGames() Game[]
+        +getGameById(id: string) Game
+        +addGame(data: object) Game
+        +updateGame(id: string, data: object) Game
+        +deleteGame(id: string) void
+        +changeStatus(id: string, next: GameStatus) boolean
+        +filterGames(filter: GameFilter) Game[]
+        +getTotalPlaytime(gameId: string) number
+        +logSession(gameId: string, session: PlaySession) PlaySession
+        +deleteSession(sessionId: string) void
+        +getSessions(gameId: string) PlaySession[]
+        +saveReview(gameId: string, rating: number, text: string) Review
+        +getReview(gameId: string) Review
+        +deleteReview(gameId: string) void
+    }
+
+    %% ============================================================
+    %% DATA / PERSISTENCE LAYER
+    %% ============================================================
+    class GameRepository {
+        -storage: StorageService
+        -games: Game[]
+        -sessions: PlaySession[]
+        -reviews: Review[]
+        -platforms: Platform[]
+        -genres: Genre[]
+        +load() void
+        +save() void
+        +getGames() Game[]
+        +saveGame(game: Game) void
+        +removeGame(id: string) void
+        +getSessions() PlaySession[]
+        +saveSession(session: PlaySession) void
+        +removeSession(id: string) void
+        +getReviews() Review[]
+        +saveReview(review: Review) void
+        +removeReview(id: string) void
+        +getPlatforms() Platform[]
+        +getGenres() Genre[]
+        +seedIfEmpty() void
+    }
+
+    class StorageService {
+        <<interface>>
+        +getItem(key: string) string
+        +setItem(key: string, value: string) void
+        +removeItem(key: string) void
+        +clear() void
+    }
+
+    class LocalStorageService {
+        -prefix: string
+        +getItem(key: string) string
+        +setItem(key: string, value: string) void
+        +removeItem(key: string) void
+        +clear() void
+    }
+
+    %% ============================================================
+    %% RELATIONSHIPS
+    %% ============================================================
+
+    %% Domain relationships
+    Game "*" --> "1" Platform : runs on
+    Game "*" --> "*" Genre : tagged with
+    Game "1" *-- "*" PlaySession : logs
+    Game "1" *-- "0..1" Review : rated by
+    Game --> GameStatus : has status
+
+    %% UI config
+    StatusMeta --> GameStatus : describes
+
+    %% Filter object
+    GameFilter --> GameStatus : filters by
+    GameFilter --> SortField : sorts by
+    GameFilter --> SortOrder : ordered by
+    GameFilter ..> Game : filters
+
+    %% Stats
+    BacklogStats "1" o-- "*" StatusCount : status breakdown
+    BacklogStats "1" o-- "*" GenreCount : top genres
+    StatusCount --> GameStatus
+    GenreCount --> Genre
+    StatsService ..> BacklogStats : creates
+    StatsService ..> Game : reads
+    StatsService ..> PlaySession : reads
+    StatsService ..> Review : reads
+
+    %% Services and persistence
+    GameService --> GameRepository : uses
+    GameService ..> GameFilter : applies
+    GameService ..> Game : manages
+    GameService ..> PlaySession : manages
+    GameService ..> Review : manages
+    GameRepository o-- Game : stores
+    GameRepository o-- PlaySession : stores
+    GameRepository o-- Review : stores
+    GameRepository o-- Platform : stores
+    GameRepository o-- Genre : stores
+    GameRepository --> StorageService : persists via
+    LocalStorageService ..|> StorageService : implements
