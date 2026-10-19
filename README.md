@@ -1,16 +1,48 @@
-# React + Vite
+# BacklogHQ
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+BacklogHQ is a personal game library and backlog tracker. Organize the games
+you want to play, keep track of what you are playing or have completed, and
+review your progress from a data-driven dashboard.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- Add, edit, and delete games in a personal library.
+- Track each game's status: Wishlist, Backlog, Playing, Completed, or Dropped.
+- Search, filter, and sort games by title, status, platform, genre, priority,
+  release year, rating, and date added.
+- View game details, including platform, genres, release year, notes, priority,
+  rating, and total playtime.
+- Log dated play sessions with hours and optional notes.
+- Save a 1–5 star rating and review for each game.
+- View collection statistics, status distribution, top genres, and recent play
+  sessions on the dashboard.
+- Persist data in the browser with localStorage.
+- Use a responsive dark interface on desktop and mobile.
 
-## React Compiler
+## Built with
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- React
+- Vite
+- Tailwind CSS
+- React Router
 
-## Expanding the ESLint configuration
+## Getting started
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+Install dependencies and start the development server:
+
+```sh
+npm install
+npm run dev
+```
+
+Run the production build and lint checks:
+
+```sh
+npm run build
+npm run lint
+```
+
+## Data storage
+
+BacklogHQ stores its data in the current browser's localStorage. The library is
+local to that browser and is not synchronized across devices.

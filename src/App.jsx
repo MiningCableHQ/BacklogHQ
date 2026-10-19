@@ -91,7 +91,7 @@ function AppShell() {
         <Link
           className="flex items-center gap-3 px-4 py-4 sm:px-5 sm:py-5"
           to="/"
-          aria-label="Game Backlog Tracker home"
+          aria-label="BacklogHQ home"
         >
           <img
             alt=""
@@ -100,7 +100,7 @@ function AppShell() {
             src="/CableHQ.svg"
           />
           <span className="text-sm font-semibold tracking-wide text-white">
-            Game Backlog Tracker
+            BacklogHQ
           </span>
         </Link>
 
