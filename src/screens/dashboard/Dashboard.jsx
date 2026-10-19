@@ -94,7 +94,7 @@ export function DashboardPage({ data }) {
       </section>
 
       <div className="mt-5 grid gap-5 lg:grid-cols-[minmax(0,1.3fr)_minmax(280px,0.8fr)]">
-        <section className="rounded-2xl border border-white/[0.08] bg-[#12101a] p-5 sm:p-6">
+        <section className="min-w-0 rounded-2xl border border-white/[0.08] bg-[#12101a] p-5 sm:p-6">
           <div className="mb-5">
             <h2 className="text-base font-semibold text-white">Games by Status</h2>
             <p className="mt-1 text-xs text-slate-500">
@@ -134,7 +134,7 @@ export function DashboardPage({ data }) {
           </div>
         </section>
 
-        <section className="rounded-2xl border border-white/[0.08] bg-[#12101a] p-5 sm:p-6">
+        <section className="min-w-0 rounded-2xl border border-white/[0.08] bg-[#12101a] p-5 sm:p-6">
           <div className="mb-5">
             <h2 className="text-base font-semibold text-white">Top Genres</h2>
             <p className="mt-1 text-xs text-slate-500">
@@ -167,7 +167,7 @@ export function DashboardPage({ data }) {
       </div>
 
       <div className="mt-5 grid gap-5 lg:grid-cols-2">
-        <section className="rounded-2xl border border-white/[0.08] bg-[#12101a] p-5 sm:p-6">
+        <section className="min-w-0 rounded-2xl border border-white/[0.08] bg-[#12101a] p-5 sm:p-6">
           <div className="mb-4">
             <h2 className="text-base font-semibold text-white">Recent Play Sessions</h2>
             <p className="mt-1 text-xs text-slate-500">
@@ -224,7 +224,7 @@ export function DashboardPage({ data }) {
           )}
         </section>
 
-        <section className="rounded-2xl border border-white/[0.08] bg-[#12101a] p-5 sm:p-6">
+        <section className="min-w-0 rounded-2xl border border-white/[0.08] bg-[#12101a] p-5 sm:p-6">
           <div className="mb-4">
             <h2 className="text-base font-semibold text-white">Now Playing</h2>
             <p className="mt-1 text-xs text-slate-500">

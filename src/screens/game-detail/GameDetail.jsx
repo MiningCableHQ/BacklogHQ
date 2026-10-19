@@ -256,7 +256,7 @@ export function GameDetailPage({ data, onSave }) {
                   return (
                     <button
                       aria-pressed={selected}
-                      className={`flex min-h-10 cursor-pointer items-center justify-center rounded-lg border px-3 text-xs font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-300 ${
+                      className={`flex min-h-11 cursor-pointer items-center justify-center rounded-lg border px-3 text-xs font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-300 ${
                         selected
                           ? STATUS_STYLES[status]
                           : 'border-white/[0.08] bg-white/[0.02] text-slate-400 hover:border-white/20 hover:text-slate-200'
@@ -301,7 +301,7 @@ export function GameDetailPage({ data, onSave }) {
       </section>
 
       <div className="mt-5 grid gap-5 lg:grid-cols-[minmax(0,1.4fr)_minmax(280px,0.8fr)]">
-        <section className="rounded-2xl border border-white/[0.08] bg-[#12101a] p-5 sm:p-6">
+        <section className="min-w-0 rounded-2xl border border-white/[0.08] bg-[#12101a] p-5 sm:p-6">
           <div className="flex items-start justify-between gap-4">
             <div>
               <h2 className="text-base font-semibold text-white">Play Sessions</h2>
@@ -404,7 +404,7 @@ export function GameDetailPage({ data, onSave }) {
           )}
         </section>
 
-        <section className="rounded-2xl border border-white/[0.08] bg-[#12101a] p-5 sm:p-6">
+        <section className="min-w-0 rounded-2xl border border-white/[0.08] bg-[#12101a] p-5 sm:p-6">
           <div className="flex items-start justify-between gap-3">
             <div>
               <h2 className="text-base font-semibold text-white">Your Review</h2>

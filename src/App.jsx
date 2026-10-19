@@ -89,7 +89,7 @@ function AppShell() {
     <div className="min-h-screen bg-[#0b0a10] text-slate-100 md:flex">
       <aside className="flex w-full shrink-0 flex-col border-b border-white/[0.07] bg-[#100e17] md:sticky md:top-0 md:h-screen md:w-64 md:border-b-0 md:border-r">
         <Link
-          className="flex items-center gap-3 px-5 py-5"
+          className="flex items-center gap-3 px-4 py-4 sm:px-5 sm:py-5"
           to="/"
           aria-label="Game Backlog Tracker home"
         >
@@ -115,7 +115,7 @@ function AppShell() {
               <NavLink
                 key={to}
                 aria-current={active ? 'page' : undefined}
-                className={`flex min-h-10 flex-1 items-center gap-3 rounded-lg px-3 text-sm font-medium transition-colors md:flex-none ${
+                className={`flex min-h-11 flex-1 items-center gap-3 rounded-lg px-3 text-sm font-medium transition-colors md:flex-none ${
                   active
                     ? 'bg-violet-500/15 text-violet-200'
                     : 'text-slate-400 hover:bg-white/[0.05] hover:text-slate-100'
@@ -135,7 +135,7 @@ function AppShell() {
       </aside>
 
       <main className="min-w-0 flex-1">
-        <div className="mx-auto w-full max-w-6xl px-5 py-8 sm:px-8 sm:py-10 lg:px-12">
+        <div className="mx-auto w-full max-w-6xl px-4 py-6 sm:px-8 sm:py-10 lg:px-12">
           {trackerState.error && (
             <div
               className="mb-6 rounded-xl border border-rose-400/25 bg-rose-500/10 p-4 text-sm text-rose-200"

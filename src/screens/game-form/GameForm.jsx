@@ -233,7 +233,7 @@ export function GameFormPage({ data, onSave }) {
                 const selected = values.genreIds.includes(genre.id)
                 return (
                   <label
-                    className={`cursor-pointer rounded-full border px-3 py-1.5 text-xs font-medium transition-colors focus-within:ring-2 focus-within:ring-violet-300 focus-within:ring-offset-2 focus-within:ring-offset-[#12101a] ${
+                    className={`inline-flex min-h-11 cursor-pointer items-center rounded-full border px-3 text-xs font-medium transition-colors focus-within:ring-2 focus-within:ring-violet-300 focus-within:ring-offset-2 focus-within:ring-offset-[#12101a] ${
                       selected
                         ? 'border-violet-400/40 bg-violet-500/15 text-violet-200'
                         : 'border-white/10 bg-white/[0.03] text-slate-400 hover:border-white/20'
