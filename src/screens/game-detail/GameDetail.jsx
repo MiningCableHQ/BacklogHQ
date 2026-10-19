@@ -142,8 +142,7 @@ export function GameDetailPage({ data, onSave }) {
     }
   }
 
-  function changeStatus(event) {
-    const nextStatus = event.target.value
+  function changeStatus(nextStatus) {
     if (!GAME_STATUSES.includes(nextStatus)) {
       setSaveError('Choose a valid game status.')
       return
@@ -227,7 +226,9 @@ export function GameDetailPage({ data, onSave }) {
                   {game.title}
                 </h1>
                 <p className="mt-2 text-sm text-slate-400">
-                  {game.releaseYear}
+                  {Number.isFinite(game.releaseYear)
+                    ? game.releaseYear
+                    : 'Year unknown'}
                   {genres.length > 0 && (
                     <>
                       <span className="px-2 text-slate-600">·</span>
@@ -245,28 +246,27 @@ export function GameDetailPage({ data, onSave }) {
               <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
                 Status
               </p>
-              <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 xl:grid-cols-5">
+              <div
+                aria-label="Game status"
+                className="grid grid-cols-2 gap-2 sm:grid-cols-3 xl:grid-cols-5"
+                role="group"
+              >
                 {GAME_STATUSES.map((status) => {
                   const selected = game.status === status
                   return (
-                    <label
-                      className={`flex min-h-10 cursor-pointer items-center justify-center rounded-lg border px-3 text-xs font-medium transition-colors ${
+                    <button
+                      aria-pressed={selected}
+                      className={`flex min-h-10 cursor-pointer items-center justify-center rounded-lg border px-3 text-xs font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-300 ${
                         selected
                           ? STATUS_STYLES[status]
                           : 'border-white/[0.08] bg-white/[0.02] text-slate-400 hover:border-white/20 hover:text-slate-200'
                       }`}
                       key={status}
+                      onClick={() => changeStatus(status)}
+                      type="button"
                     >
-                      <input
-                        checked={selected}
-                        className="sr-only"
-                        name="game-status"
-                        onChange={changeStatus}
-                        type="radio"
-                        value={status}
-                      />
                       {STATUS_LABELS[status]}
-                    </label>
+                    </button>
                   )
                 })}
               </div>
@@ -316,7 +316,7 @@ export function GameDetailPage({ data, onSave }) {
             </span>
           </div>
           <form
-            className="mt-5 grid gap-3 rounded-xl border border-white/[0.07] bg-[#0e0c14] p-4 sm:grid-cols-[1fr_110px_1.3fr_auto]"
+            className="mt-5 grid gap-3 rounded-xl border border-white/[0.07] bg-[#0e0c14] p-4 md:grid-cols-[minmax(0,1fr)_110px_minmax(0,1.3fr)_auto]"
             onSubmit={handleSessionSubmit}
           >
             <label className="text-xs font-medium text-slate-400">

@@ -214,7 +214,7 @@ export function LibraryPage({ data, onSave }) {
                 Sort by
                 <select
                   aria-label="Sort by"
-                  className="min-h-9 rounded-lg border border-white/10 bg-[#0d0b13] px-3 text-xs text-slate-200 outline-none focus:border-violet-400"
+                  className="min-h-9 rounded-lg border border-white/10 bg-[#0d0b13] px-3 text-xs text-slate-200 outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-500/20"
                   name="sortBy"
                   onChange={updateFilter}
                   value={filters.sortBy}
@@ -227,7 +227,7 @@ export function LibraryPage({ data, onSave }) {
               </label>
               <button
                 aria-label={`Sort ${filters.sortOrder === 'ASC' ? 'descending' : 'ascending'}`}
-                className="min-h-9 rounded-lg border border-white/10 px-3 text-xs text-slate-300 transition hover:bg-white/[0.05]"
+                className="min-h-9 rounded-lg border border-white/10 px-3 text-xs text-slate-300 transition hover:bg-white/[0.05] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-300"
                 onClick={() =>
                   setFilters((current) => ({
                     ...current,
@@ -245,7 +245,7 @@ export function LibraryPage({ data, onSave }) {
                 {filters.sortOrder === 'ASC' ? '↑ Asc' : '↓ Desc'}
               </button>
               <button
-                className="min-h-9 rounded-lg px-3 text-xs font-medium text-violet-300 transition hover:bg-violet-500/10 disabled:cursor-not-allowed disabled:text-slate-600 disabled:hover:bg-transparent"
+                className="min-h-9 rounded-lg px-3 text-xs font-medium text-violet-300 transition hover:bg-violet-500/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-300 disabled:cursor-not-allowed disabled:text-slate-600 disabled:hover:bg-transparent"
                 disabled={!hasActiveFilters}
                 onClick={resetFilters}
                 type="button"
@@ -361,7 +361,7 @@ function GameCard({ game, genres, index, onDelete, platforms, rating }) {
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
             <Link
-              className="block truncate font-semibold text-white transition-colors hover:text-violet-200"
+              className="block truncate font-semibold text-white transition-colors hover:text-violet-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-300"
               to={`/games/${encodeURIComponent(game.id)}`}
             >
               {game.title}
@@ -405,13 +405,13 @@ function GameCard({ game, genres, index, onDelete, platforms, rating }) {
           <div className="flex gap-3">
             <Link
               aria-label={`Edit ${game.title}`}
-              className="text-xs font-medium text-slate-400 hover:text-violet-200"
+              className="text-xs font-medium text-slate-400 hover:text-violet-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-300"
               to={`/games/${encodeURIComponent(game.id)}/edit`}
             >
               Edit
             </Link>
             <button
-              className="text-xs font-medium text-rose-300 hover:text-rose-200"
+              className="text-xs font-medium text-rose-300 hover:text-rose-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-300"
               onClick={onDelete}
               type="button"
             >

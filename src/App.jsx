@@ -119,7 +119,7 @@ function AppShell() {
                   active
                     ? 'bg-violet-500/15 text-violet-200'
                     : 'text-slate-400 hover:bg-white/[0.05] hover:text-slate-100'
-                }`}
+                } focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-300`}
                 to={to}
               >
                 <NavIcon path={icon} />

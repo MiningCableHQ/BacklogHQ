@@ -23,7 +23,7 @@ export function PageHeading({ eyebrow, title, description, action }) {
 export function PrimaryLink({ children, to }) {
   return (
     <Link
-      className={`${BUTTON_CLASS} bg-violet-600 text-white hover:bg-violet-500`}
+      className={`${BUTTON_CLASS} shrink-0 whitespace-nowrap bg-violet-600 text-white hover:bg-violet-500`}
       to={to}
     >
       {children}
