@@ -119,7 +119,7 @@ export function DashboardPage({ data }) {
                       className={`h-full rounded-full transition-[width] ${
                         {
                           WISHLIST: 'bg-slate-400',
-                          BACKLOG: 'bg-violet-500',
+                          BACKLOG: 'bg-amber-400',
                           PLAYING: 'bg-blue-500',
                           COMPLETED: 'bg-emerald-400',
                           DROPPED: 'bg-rose-400',
@@ -151,8 +151,9 @@ export function DashboardPage({ data }) {
                   </div>
                   <div className="h-2 overflow-hidden rounded-full bg-white/[0.06]">
                     <div
-                      className="h-full rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-400"
+                      className="h-full rounded-full"
                       style={{
+                        backgroundColor: '#a78bf9',
                         width: `${(genre.count / largestGenreCount) * 100}%`,
                       }}
                     />

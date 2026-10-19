@@ -7,11 +7,11 @@ export const STATUS_LABELS = {
 }
 
 export const STATUS_STYLES = {
-  WISHLIST: 'border-slate-500/30 bg-slate-500/10 text-slate-300',
-  BACKLOG: 'border-violet-400/25 bg-violet-500/10 text-violet-200',
-  PLAYING: 'border-blue-400/25 bg-blue-500/10 text-blue-200',
-  COMPLETED: 'border-emerald-400/25 bg-emerald-500/10 text-emerald-200',
-  DROPPED: 'border-rose-400/25 bg-rose-500/10 text-rose-200',
+  WISHLIST: 'border-slate-300/40 bg-slate-800/95 text-slate-100',
+  BACKLOG: 'border-amber-300/50 bg-amber-950/95 text-amber-200',
+  PLAYING: 'border-blue-300/50 bg-blue-950/95 text-blue-200',
+  COMPLETED: 'border-emerald-300/50 bg-emerald-950/95 text-emerald-200',
+  DROPPED: 'border-rose-300/50 bg-rose-950/95 text-rose-200',
 }
 
 export const INPUT_CLASS =

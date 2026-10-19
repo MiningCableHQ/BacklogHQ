@@ -334,7 +334,7 @@ function GamePreview({ platform, values }) {
     <aside className="h-fit rounded-2xl border border-white/[0.08] bg-[#12101a] p-4">
       <h2 className="mb-4 text-sm font-semibold text-white">Live Preview</h2>
       <div className="overflow-hidden rounded-xl border border-white/[0.08] bg-[#171420]">
-        <div className="flex aspect-[1.5/1] items-center justify-center bg-gradient-to-br from-fuchsia-500 via-violet-500 to-blue-600">
+        <div className="flex aspect-[1.5/1] items-center justify-center bg-[#a78bf9]">
           {showImage ? (
             <img
               alt={values.title ? `${values.title} cover preview` : 'Cover preview'}

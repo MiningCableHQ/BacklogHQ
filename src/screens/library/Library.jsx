@@ -274,12 +274,11 @@ export function LibraryPage({ data, onSave }) {
         </section>
       ) : sortedGames.length > 0 ? (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
-          {sortedGames.map((game, index) => (
+          {sortedGames.map((game) => (
             <GameCard
               key={`${game.id}:${game.coverUrl}`}
               game={game}
               genres={data.genres}
-              index={index}
               rating={activeReviews.get(game.id)}
               onDelete={() => deleteGame(game)}
               platforms={data.platforms}
@@ -310,19 +309,12 @@ export function LibraryPage({ data, onSave }) {
   )
 }
 
-function GameCard({ game, genres, index, onDelete, platforms, rating }) {
+function GameCard({ game, genres, onDelete, platforms, rating }) {
   const [imageFailed, setImageFailed] = useState(false)
   const platformName =
     platforms.find((platform) => platform.id === game.platformId)?.name ??
     'Unknown platform'
   const hasCover = game.coverUrl && !imageFailed
-  const coverGradient = [
-    'from-fuchsia-500/90 via-purple-500 to-violet-700',
-    'from-rose-400 via-fuchsia-500 to-indigo-600',
-    'from-blue-500 via-indigo-500 to-violet-700',
-    'from-teal-400 via-cyan-500 to-blue-700',
-  ][index % 4]
-
   return (
     <article className="group overflow-hidden rounded-xl border border-white/[0.08] bg-[#15121e] transition hover:-translate-y-0.5 hover:border-violet-400/30 hover:shadow-xl hover:shadow-black/20">
       <Link
@@ -331,7 +323,7 @@ function GameCard({ game, genres, index, onDelete, platforms, rating }) {
         to={`/games/${encodeURIComponent(game.id)}`}
       >
         <div
-          className={`relative flex aspect-[2.4/1] items-center justify-center overflow-hidden bg-gradient-to-br ${coverGradient}`}
+          className="relative flex aspect-[2.4/1] items-center justify-center overflow-hidden bg-[#a78bf9]"
         >
           {hasCover ? (
             <img

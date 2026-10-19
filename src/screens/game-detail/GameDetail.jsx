@@ -173,9 +173,6 @@ export function GameDetailPage({ data, onSave }) {
     }
   }
 
-  const coverGradient =
-    'bg-gradient-to-br from-fuchsia-500 via-violet-500 to-blue-700'
-
   return (
     <>
       <Link
@@ -197,7 +194,7 @@ export function GameDetailPage({ data, onSave }) {
       <section className="overflow-hidden rounded-2xl border border-white/[0.08] bg-[#12101a]">
         <div className="grid gap-6 p-5 sm:p-7 lg:grid-cols-[180px_minmax(0,1fr)]">
           <div
-            className={`relative flex aspect-[4/5] max-h-64 items-center justify-center overflow-hidden rounded-xl ${coverGradient} lg:max-h-none`}
+            className="relative flex aspect-[4/5] max-h-64 items-center justify-center overflow-hidden rounded-xl bg-[#a78bf9] lg:max-h-none"
           >
             {game.coverUrl && !coverFailed ? (
               <img
