@@ -93,9 +93,12 @@ function AppShell() {
           to="/"
           aria-label="Game Backlog Tracker home"
         >
-          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-violet-600 text-sm font-bold text-white shadow-lg shadow-violet-950/40">
-            GB
-          </span>
+          <img
+            alt=""
+            aria-hidden="true"
+            className="h-9 w-9 shrink-0 rounded-xl object-contain"
+            src="/CableHQ.svg"
+          />
           <span className="text-sm font-semibold tracking-wide text-white">
             Game Backlog Tracker
           </span>
